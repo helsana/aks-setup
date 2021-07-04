@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: contracts
+    appGroup: mock
+  name: contracts
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: contracts
+  template:
+    metadata:
+      labels:
+        app: contracts
+    spec:
+      containers:
+        - name: contracts
+          image: springcloud/spring-cloud-contract-stub-runner:3.0.1
+          env:
+            - name: STUBRUNNER_IDS
+              value: "ch.helsana.myhelsana.contracts:spf:+:stubs:9999,ch.helsana.myhelsana.contracts:dsp:+:stubs:9998,ch.helsana.myhelsana.contracts:xmlgateway:+:stubs:9997"
+            - name: STUBRUNNER_STUBS_MODE
+              value: "REMOTE"
+            - name: STUBRUNNER_GENERATE_STUBS
+              value: "TRUE"
+            - name: STUBRUNNER_REPOSITORY_ROOT
+              value: "git://https://dev.azure.com/helsana/MYHELSANA/_git/contracts"
+            - name: STUBRUNNER_USERNAME
+              value: "helsana"
+            - name: STUBRUNNER_PASSWORD
+              value: baov3bvvvm5mxaasywdlhdbkoc2ek5g6rrpkl5vxuluk3epvvina
+            - name: STUBRUNNER_PROPERTIES_GIT_ENSURE_GIT_SUFFIX
+              value: "FALSE"
+            - name: LANG
+              value: "C.UTF-8"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: contracts
+  name: contracts
+spec:
+  ports:
+    - port: 80
+      name: spf-contracts
+      protocol: TCP
+      targetPort: 9999
+    - port: 81
+      name: dsp-contracts
+      protocol: TCP
+      targetPort: 9998
+    - port: 82
+      name: xmlgateway-contracts
+      protocol: TCP
+      targetPort: 9997
+  selector:
+    app: contracts
+  type: NodePort
