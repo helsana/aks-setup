@@ -5,10 +5,10 @@ metadata:
   name: registrierung-service-ingress
 spec:
   routes:
-    - match: PathPrefix(`/registrierung`)
+    - match: Path(`/registrierung`)
       kind: Rule
       middlewares:
-        - name: test-stripprefix
+        - name: registrierung-service-stripprefix
       services:
         - name: registrierung-service
           port: 80
@@ -16,7 +16,7 @@ spec:
 apiVersion: traefik.containo.us/v1alpha1
 kind: Middleware
 metadata:
-  name: test-stripprefix
+  name: registrierung-service-stripprefix
 spec:
   stripPrefix:
     prefixes:
